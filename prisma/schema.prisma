@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model VariantCategory {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  sarees    Saree[]
+}
+
+model Saree {
+  id                String   @id @default(cuid())
+  sku               String   @unique
+  name              String
+  description       String?
+  variantId         String
+  variant           VariantCategory @relation(fields: [variantId], references: [id])
+  color             String?
+  pattern           String?
+  imageUrl          String
+  costPrice         Float
+  sellingPrice      Float
+  stockQuantity     Int      @default(0)
+  lowStockThreshold Int      @default(5)
+  tagCode           String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  purchaseItems  PurchaseLineItem[]
+  salesItems     SalesLineItem[]
+  stockMovements StockMovement[]
+}
+
+model PurchaseReceipt {
+  id          String   @id @default(cuid())
+  receiptNo   String   @unique
+  vendorName  String
+  vendorPhone String?
+  notes       String?
+  totalAmount Float
+  createdAt   DateTime @default(now())
+  items       PurchaseLineItem[]
+}
+
+model PurchaseLineItem {
+  id         String @id @default(cuid())
+  purchaseId String
+  sareeId    String
+  quantity   Int
+  unitCost   Float
+  lineTotal  Float
+
+  purchase PurchaseReceipt @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+  saree    Saree           @relation(fields: [sareeId], references: [id])
+}
+
+model SalesReceipt {
+  id            String   @id @default(cuid())
+  receiptNo     String   @unique
+  customerName  String?
+  customerPhone String?
+  notes         String?
+  totalAmount   Float
+  discount      Float    @default(0)
+  createdAt     DateTime @default(now())
+  items         SalesLineItem[]
+}
+
+model SalesLineItem {
+  id        String @id @default(cuid())
+  salesId   String
+  sareeId   String
+  quantity  Int
+  unitPrice Float
+  lineTotal Float
+
+  sales SalesReceipt @relation(fields: [salesId], references: [id], onDelete: Cascade)
+  saree Saree        @relation(fields: [sareeId], references: [id])
+}
+
+model StockMovement {
+  id        String   @id @default(cuid())
+  sareeId   String
+  saree     Saree    @relation(fields: [sareeId], references: [id])
+  type      String
+  quantity  Int
+  reference String?
+  notes     String?
+  createdAt DateTime @default(now())
+}
