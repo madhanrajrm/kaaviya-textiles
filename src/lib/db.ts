@@ -2,9 +2,18 @@ import { PrismaClient } from "@prisma/client";
 import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
+import dotenv from "dotenv";
+
+if (!process.env.DATABASE_URL) {
+  dotenv.config({ path: path.resolve(process.cwd(), ".env") });
+}
 
 const isVercel = process.env.VERCEL === "1";
 const sqliteUrl = process.env.DATABASE_URL;
+
+if (sqliteUrl && sqliteUrl.startsWith("./")) {
+  process.env.DATABASE_URL = `file:${sqliteUrl}`;
+}
 
 if (isVercel && sqliteUrl?.startsWith("file:")) {
   const filePath = sqliteUrl.replace("file:./", "").replace("file:", "");
