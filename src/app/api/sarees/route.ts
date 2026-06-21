@@ -48,7 +48,7 @@ export async function POST(request: Request) {
     tagCode,
   } = body;
 
-  if (!sku || !name || !variantId || !imageUrl) {
+  if (!sku || !name || !variantId) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
 
@@ -61,7 +61,7 @@ export async function POST(request: Request) {
         variantId,
         color: color ? String(color) : null,
         pattern: pattern ? String(pattern) : null,
-        imageUrl: String(imageUrl),
+        imageUrl: imageUrl ? String(imageUrl) : "",
         costPrice: Number(costPrice) || 0,
         sellingPrice: Number(sellingPrice) || 0,
         stockQuantity: Number(stockQuantity) || 0,
@@ -71,7 +71,8 @@ export async function POST(request: Request) {
       include: { variant: true },
     });
     return NextResponse.json(saree, { status: 201 });
-  } catch {
+  } catch (err) {
+    console.error("Saree create error:", err);
     return NextResponse.json({ error: "SKU already exists" }, { status: 409 });
   }
 }

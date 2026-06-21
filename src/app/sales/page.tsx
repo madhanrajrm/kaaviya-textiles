@@ -5,6 +5,8 @@ import { formatCurrency, formatDate } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
 
+export const dynamic = "force-dynamic";
+
 export default async function SalesPage() {
   const sales = await prisma.salesReceipt.findMany({
     orderBy: { createdAt: "desc" },

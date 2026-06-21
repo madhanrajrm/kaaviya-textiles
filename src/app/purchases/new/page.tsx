@@ -2,6 +2,8 @@ import { prisma } from "@/lib/db";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { NewPurchaseForm } from "./new-purchase-form";
 
+export const dynamic = "force-dynamic";
+
 export default async function NewPurchasePage() {
   const sarees = await prisma.saree.findMany({
     include: { variant: true },

@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { VariantForm } from "@/components/variants/variant-form";
+import { VariantItem } from "@/components/variants/variant-item";
 
 export default async function VariantsPage() {
   const variants = await prisma.variantCategory.findMany({ orderBy: { name: "asc" } });
@@ -24,7 +25,7 @@ export default async function VariantsPage() {
               <ul className="space-y-2">
                 {variants.map((variant) => (
                   <li key={variant.id} className="rounded-xl border border-[#e8d5c4] bg-white px-4 py-3 text-sm text-[#1a0f0f]">
-                    {variant.name}
+                    <VariantItem id={variant.id} name={variant.name} />
                   </li>
                 ))}
               </ul>

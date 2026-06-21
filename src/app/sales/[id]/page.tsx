@@ -4,6 +4,8 @@ import { ArrowLeft } from "lucide-react";
 import { prisma } from "@/lib/db";
 import { ReceiptPrint } from "@/components/receipts/receipt-print";
 
+export const dynamic = "force-dynamic";
+
 export default async function SaleDetailPage({
   params,
 }: {

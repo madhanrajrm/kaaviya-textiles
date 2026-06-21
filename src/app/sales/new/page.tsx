@@ -2,6 +2,8 @@ import { prisma } from "@/lib/db";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { NewSaleForm } from "./new-sale-form";
 
+export const dynamic = "force-dynamic";
+
 export default async function NewSalePage() {
   const sarees = await prisma.saree.findMany({
     where: { stockQuantity: { gt: 0 } },

@@ -33,7 +33,7 @@ export function SareeForm({ variants, initial }: Props) {
     imageUrl: initial?.imageUrl ?? "",
     costPrice: initial?.costPrice ?? 200,
     sellingPrice: initial?.sellingPrice ?? 500,
-    stockQuantity: initial?.stockQuantity ?? 0,
+    stockQuantity: initial?.stockQuantity ?? "",
     lowStockThreshold: initial?.lowStockThreshold ?? 5,
     tagCode: initial?.tagCode ?? "",
   });
@@ -152,7 +152,9 @@ export function SareeForm({ variants, initial }: Props) {
                   }
                   const variant: NewVariant & { id: string } = await variantRes.json();
                   setForm({ ...form, variantId: variant.id });
+                  setLocalVariants((cur) => [...cur, variant]);
                   setNewVariantName("");
+                  router.refresh();
                 }}
               >
                 Add
@@ -198,14 +200,31 @@ export function SareeForm({ variants, initial }: Props) {
         </div>
       </div>
       <div>
-        <Label htmlFor="imageUrl">Image URL</Label>
+        <Label htmlFor="imageUrl">Image URL (optional)</Label>
         <Input
           id="imageUrl"
           value={form.imageUrl}
           onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
-          required
           placeholder="https://images.unsplash.com/..."
         />
+        <div className="mt-2">
+          <Label htmlFor="imageUpload">Or upload from your device</Label>
+          <Input
+            id="imageUpload"
+            type="file"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+              const reader = new FileReader();
+              reader.onload = () => {
+                const dataUrl = String(reader.result ?? "");
+                setForm((f) => ({ ...f, imageUrl: dataUrl }));
+              };
+              reader.readAsDataURL(file);
+            }}
+          />
+          <p className="mt-2 text-xs text-slate-500">Uploaded images are stored as data URLs (local/dev only).</p>
+        </div>
       </div>
       <div className="grid gap-4 sm:grid-cols-3">
         <div>
@@ -238,8 +257,9 @@ export function SareeForm({ variants, initial }: Props) {
             id="stockQuantity"
             type="number"
             min={0}
-            value={form.stockQuantity}
-            onChange={(e) => setForm({ ...form, stockQuantity: Number(e.target.value) })}
+            value={form.stockQuantity as any}
+            onChange={(e) => setForm({ ...form, stockQuantity: e.target.value })}
+            placeholder=""
           />
         </div>
       </div>
