@@ -16,9 +16,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Name is required" }, { status: 400 });
   }
   try {
+    const existing = await prisma.variantCategory.findUnique({ where: { name } });
+    if (existing) {
+      return NextResponse.json({ error: "Variant already exists" }, { status: 409 });
+    }
     const variant = await prisma.variantCategory.create({ data: { name } });
     return NextResponse.json(variant, { status: 201 });
-  } catch {
-    return NextResponse.json({ error: "Variant already exists" }, { status: 409 });
+  } catch (err) {
+    console.error("Variant creation error:", err);
+    return NextResponse.json({ error: "Unable to create variant" }, { status: 500 });
   }
 }

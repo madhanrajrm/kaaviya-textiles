@@ -9,9 +9,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
+    <div className="flex min-h-screen bg-slate-50 text-slate-900">
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div className="lg:pl-72">
+      <div className="flex flex-1 flex-col">
         <div className="sticky top-0 z-30 flex items-center justify-between border-b border-slate-200 bg-white/95 px-4 py-3 shadow-sm backdrop-blur-md lg:hidden">
           <button
             type="button"
@@ -24,7 +24,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <div className="h-10 w-10" />
         </div>
 
-        <main className="min-h-screen overflow-auto bg-slate-50">
+        <main className="flex-1 overflow-auto">
           <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">{children}</div>
         </main>
       </div>

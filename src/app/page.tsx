@@ -91,9 +91,25 @@ export default async function DashboardPage() {
 
   return (
     <div>
-      <header className="mb-8">
-        <h1 className="font-serif text-3xl font-bold text-[#1a0f0f]">Dashboard</h1>
-        <p className="mt-1 text-[#6b5a5a]">{SHOP_TAGLINE}</p>
+      <header className="mb-12 rounded-3xl bg-gradient-to-br from-sky-600 via-sky-500 to-teal-600 px-8 py-16 text-white sm:px-12 sm:py-24">
+        <h1 className="font-serif text-5xl font-extrabold leading-tight sm:text-6xl">
+          Kaaviya Textiles
+        </h1>
+        <p className="mt-4 text-lg text-sky-100">{SHOP_TAGLINE}</p>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <Link href="/sales/new">
+            <Button className="bg-white text-sky-600 hover:bg-slate-100">
+              <ShoppingCart className="h-5 w-5" />
+              Start a Sale
+            </Button>
+          </Link>
+          <Link href="/sarees">
+            <Button variant="outline" className="border-white text-white hover:bg-white/10">
+              <Shirt className="h-5 w-5" />
+              View Catalog
+            </Button>
+          </Link>
+        </div>
       </header>
 
           <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

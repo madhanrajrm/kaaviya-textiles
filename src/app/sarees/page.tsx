@@ -75,11 +75,24 @@ export default async function SareesPage({
         </CardBody>
       </Card>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {sarees.map((saree) => (
-          <SareeCard key={saree.id} saree={saree} />
-        ))}
-      </div>
+      {sarees.length === 0 ? (
+        <div className="rounded-2xl border-2 border-dashed border-slate-300 px-8 py-16 text-center">
+          <p className="text-lg font-semibold text-slate-700">No sarees found</p>
+          <p className="mt-2 text-sm text-slate-500">Try adjusting your filters or add a new saree to get started.</p>
+          <Link href="/sarees/new" className="mt-4 inline-block">
+            <Button>
+              <Plus className="h-4 w-4" />
+              Add first saree
+            </Button>
+          </Link>
+        </div>
+      ) : (
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {sarees.map((saree) => (
+            <SareeCard key={saree.id} saree={saree} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
