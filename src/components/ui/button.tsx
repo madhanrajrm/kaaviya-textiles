@@ -4,12 +4,10 @@ import { ButtonHTMLAttributes, forwardRef } from "react";
 type Variant = "primary" | "secondary" | "outline" | "ghost" | "danger";
 
 const variants: Record<Variant, string> = {
-  primary:
-    "bg-[#7a1f2e] text-white hover:bg-[#5c1723] shadow-md shadow-[#7a1f2e]/20",
-  secondary: "bg-[#c9a227] text-[#1a0f0f] hover:bg-[#b08e1f] font-semibold",
-  outline:
-    "border-2 border-[#7a1f2e] text-[#7a1f2e] hover:bg-[#7a1f2e]/5 bg-transparent",
-  ghost: "text-[#7a1f2e] hover:bg-[#7a1f2e]/10 bg-transparent",
+  primary: "bg-sky-600 text-white hover:bg-sky-700 shadow-sm shadow-slate-900/10",
+  secondary: "bg-amber-500 text-slate-950 hover:bg-amber-600 shadow-sm shadow-amber-500/10",
+  outline: "border border-slate-300 bg-transparent text-slate-700 hover:bg-slate-100",
+  ghost: "text-slate-700 hover:bg-slate-100 bg-transparent",
   danger: "bg-red-600 text-white hover:bg-red-700",
 };
 
@@ -20,7 +18,7 @@ export const Button = forwardRef<
   <button
     ref={ref}
     className={cn(
-      "inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all disabled:opacity-50 disabled:pointer-events-none",
+      "inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-semibold transition-all disabled:opacity-50 disabled:pointer-events-none",
       variants[variant],
       className
     )}

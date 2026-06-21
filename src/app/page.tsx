@@ -96,26 +96,26 @@ export default async function DashboardPage() {
         <p className="mt-1 text-[#6b5a5a]">{SHOP_TAGLINE}</p>
       </header>
 
-      <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => {
-          const Icon = stat.icon;
-          return (
-            <Link key={stat.label} href={stat.href}>
-              <Card className="transition hover:shadow-md hover:border-[#c9a227]/40">
-                <CardBody className="flex items-center gap-4 !py-5">
-                  <div className={`rounded-xl bg-[#f5ebe0] p-3 ${stat.color}`}>
-                    <Icon className="h-6 w-6" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-[#6b5a5a]">{stat.label}</p>
-                    <p className="text-2xl font-bold text-[#1a0f0f]">{stat.value}</p>
-                  </div>
-                </CardBody>
-              </Card>
-            </Link>
-          );
-        })}
-      </div>
+          <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {stats.map((stat) => {
+              const Icon = stat.icon;
+              return (
+                <Link key={stat.label} href={stat.href}>
+                  <Card className="transition hover:shadow-2xl">
+                    <CardBody className="flex items-center gap-4 !py-6">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-soft text-primary">
+                        <Icon className="h-6 w-6" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-medium text-slate-500">{stat.label}</p>
+                        <p className="text-3xl font-extrabold text-slate-900">{stat.value}</p>
+                      </div>
+                    </CardBody>
+                  </Card>
+                </Link>
+              );
+            })}
+          </div>
 
       <div className="mb-6 flex flex-wrap gap-3">
         <Link href="/sales/new">

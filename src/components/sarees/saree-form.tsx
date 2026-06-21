@@ -7,6 +7,10 @@ import { Input, Label, Select, Textarea } from "@/components/ui/input";
 import { PRICE_POINTS } from "@/lib/constants";
 import type { Saree, VariantCategory } from "@/types";
 
+type NewVariant = {
+  name: string;
+};
+
 type Props = {
   variants: VariantCategory[];
   initial?: Saree;
@@ -16,6 +20,8 @@ export function SareeForm({ variants, initial }: Props) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [newVariantName, setNewVariantName] = useState("");
+  const [variantError, setVariantError] = useState("");
 
   const [form, setForm] = useState({
     sku: initial?.sku ?? "",
@@ -31,11 +37,39 @@ export function SareeForm({ variants, initial }: Props) {
     lowStockThreshold: initial?.lowStockThreshold ?? 5,
     tagCode: initial?.tagCode ?? "",
   });
+  const [localVariants, setLocalVariants] = useState(variants);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError("");
+
+    if (!form.variantId && !newVariantName.trim()) {
+      setVariantError("A variant is required before saving.");
+      setLoading(false);
+      return;
+    }
+
+    const formData = { ...form };
+    if (newVariantName.trim()) {
+      const variantRes = await fetch("/api/variants", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newVariantName.trim() }),
+      });
+
+      if (!variantRes.ok) {
+        const data = await variantRes.json();
+        setVariantError(data.error ?? "Unable to create variant");
+        setLoading(false);
+        return;
+      }
+
+      const variant: NewVariant & { id: string } = await variantRes.json();
+      formData.variantId = variant.id;
+      setLocalVariants((current) => [...current, variant]);
+      setNewVariantName("");
+    }
 
     const url = initial ? `/api/sarees/${initial.id}` : "/api/sarees";
     const method = initial ? "PATCH" : "POST";
@@ -43,7 +77,7 @@ export function SareeForm({ variants, initial }: Props) {
     const res = await fetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      body: JSON.stringify(formData),
     });
 
     if (!res.ok) {
@@ -75,18 +109,57 @@ export function SareeForm({ variants, initial }: Props) {
         </div>
         <div>
           <Label htmlFor="variantId">Variant</Label>
-          <Select
+           <Select
             id="variantId"
             value={form.variantId}
             onChange={(e) => setForm({ ...form, variantId: e.target.value })}
             required
           >
-            {variants.map((v) => (
+            {localVariants.map((v) => (
               <option key={v.id} value={v.id}>
                 {v.name}
               </option>
             ))}
           </Select>
+          <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <p className="text-sm font-medium text-slate-800">Create a new variant</p>
+            <div className="mt-3 flex flex-col gap-3 sm:flex-row">
+              <Input
+                value={newVariantName}
+                onChange={(e) => {
+                  setNewVariantName(e.target.value);
+                  setVariantError("");
+                }}
+                placeholder="e.g. Banaras"
+              />
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={async () => {
+                  if (!newVariantName.trim()) {
+                    setVariantError("Enter a variant name");
+                    return;
+                  }
+                  const variantRes = await fetch("/api/variants", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name: newVariantName.trim() }),
+                  });
+                  if (!variantRes.ok) {
+                    const data = await variantRes.json();
+                    setVariantError(data.error ?? "Unable to create variant");
+                    return;
+                  }
+                  const variant: NewVariant & { id: string } = await variantRes.json();
+                  setForm({ ...form, variantId: variant.id });
+                  setNewVariantName("");
+                }}
+              >
+                Add
+              </Button>
+            </div>
+            {variantError && <p className="mt-2 text-sm text-red-600">{variantError}</p>}
+          </div>
         </div>
       </div>
       <div>
