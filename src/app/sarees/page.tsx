@@ -10,10 +10,11 @@ export default async function SareesPage({
 }: {
   searchParams: Promise<{ q?: string; variantId?: string }>;
 }) {
-  const params = await searchParams;
-  const variants = await prisma.variantCategory.findMany({ orderBy: { name: "asc" } });
+  try {
+    const params = await searchParams;
+    const variants = await prisma.variantCategory.findMany({ orderBy: { name: "asc" } });
 
-  const sarees = await prisma.saree.findMany({
+    const sarees = await prisma.saree.findMany({
     where: {
       ...(params.variantId ? { variantId: params.variantId } : {}),
       ...(params.q
@@ -95,4 +96,13 @@ export default async function SareesPage({
       )}
     </div>
   );
+  } catch (error) {
+    console.error("Error loading sarees:", error);
+    return (
+      <div className="rounded-2xl border border-red-200 bg-red-50 px-8 py-12 text-center">
+        <p className="text-lg font-semibold text-red-700">Error loading sarees</p>
+        <p className="mt-2 text-sm text-red-600">Please try refreshing the page or contact support.</p>
+      </div>
+    );
+  }
 }
