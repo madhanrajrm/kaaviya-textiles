@@ -2,23 +2,24 @@ import { PrismaClient } from "@prisma/client";
 import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
-import dotenv from "dotenv";
 
-if (!process.env.DATABASE_URL) {
-  dotenv.config({ path: path.resolve(process.cwd(), ".env") });
+const rawDatabaseUrl = process.env.DATABASE_URL ?? "file:./dev.db";
+let databaseUrl = rawDatabaseUrl;
+
+if (!databaseUrl.startsWith("file:")) {
+  if (databaseUrl.startsWith("./")) {
+    databaseUrl = `file:${databaseUrl}`;
+  } else if (databaseUrl.endsWith(".db")) {
+    databaseUrl = `file:./${databaseUrl}`;
+  }
 }
 
 const isVercel = process.env.VERCEL === "1";
-const sqliteUrl = process.env.DATABASE_URL;
-
-if (sqliteUrl && sqliteUrl.startsWith("./")) {
-  process.env.DATABASE_URL = `file:${sqliteUrl}`;
-}
-
-if (isVercel && sqliteUrl?.startsWith("file:")) {
-  const filePath = sqliteUrl.replace("file:./", "").replace("file:", "");
+if (isVercel && databaseUrl.startsWith("file:")) {
+  const filePath = databaseUrl.replace("file:./", "").replace("file:", "");
   const runtimePath = path.join("/tmp", path.basename(filePath));
   process.env.DATABASE_URL = `file:${runtimePath}`;
+  databaseUrl = process.env.DATABASE_URL;
 
   if (!fs.existsSync(runtimePath)) {
     fs.mkdirSync(path.dirname(runtimePath), { recursive: true });
@@ -28,6 +29,8 @@ if (isVercel && sqliteUrl?.startsWith("file:")) {
       console.error("Prisma migrate deploy failed on Vercel runtime:", error);
     }
   }
+} else {
+  process.env.DATABASE_URL = databaseUrl;
 }
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
