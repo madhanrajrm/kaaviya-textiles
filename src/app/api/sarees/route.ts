@@ -82,4 +82,5 @@ export async function POST(request: Request) {
       { error: err?.message || "Unable to create saree" },
       { status: 500 }
     );
+  }
 }
