@@ -71,8 +71,15 @@ export async function POST(request: Request) {
       include: { variant: true },
     });
     return NextResponse.json(saree, { status: 201 });
-  } catch (err) {
-    console.error("Saree create error:", err);
-    return NextResponse.json({ error: "SKU already exists" }, { status: 409 });
-  }
+ } catch (err: any) {
+   console.error("Saree create error:", err);
+
+    if (err.code === "P2002") {
+      return NextResponse.json({ error: "SKU already exists" }, { status: 409 });
+    }
+  
+    return NextResponse.json(
+      { error: err?.message || "Unable to create saree" },
+      { status: 500 }
+    );
 }
