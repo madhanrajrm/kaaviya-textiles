@@ -24,7 +24,7 @@ if (isVercel && databaseUrl.startsWith("file:")) {
   if (!fs.existsSync(runtimePath)) {
     fs.mkdirSync(path.dirname(runtimePath), { recursive: true });
     try {
-      execSync("npx prisma migrate deploy", { stdio: "inherit" });
+     execSync("npx prisma db push --skip-generate", { stdio: "inherit" });
     } catch (error) {
       console.error("Prisma migrate deploy failed on Vercel runtime:", error);
     }
