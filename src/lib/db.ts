@@ -1,36 +1,23 @@
 import { PrismaClient } from "@prisma/client";
-import { execSync } from "child_process";
+import fs from "fs";
+import path from "path";
 
 const isVercel = process.env.VERCEL === "1";
 
+if (isVercel) {
+  const sourceDb = path.join(process.cwd(), "prisma", "dev.db");
+  const runtimeDb = "/tmp/dev.db";
+
+  if (!fs.existsSync(runtimeDb)) {
+    fs.copyFileSync(sourceDb, runtimeDb);
+  }
+
+  process.env.DATABASE_URL = "file:/tmp/dev.db";
+}
+
 const globalForPrisma = globalThis as unknown as {
   prisma?: PrismaClient;
-  dbReady?: boolean;
 };
-
-if (isVercel) {
-  process.env.DATABASE_URL = "file:/tmp/dev.db";
-
-  if (!globalForPrisma.dbReady) {
-    try {
-      console.log("Initializing SQLite DB at /tmp/dev.db");
-
-      execSync("./node_modules/.bin/prisma db push --skip-generate", {
-        stdio: "inherit",
-        env: {
-          ...process.env,
-          DATABASE_URL: "file:/tmp/dev.db",
-        },
-      });
-
-      globalForPrisma.dbReady = true;
-      console.log("SQLite DB initialized");
-    } catch (error) {
-      console.error("SQLite DB initialization failed:", error);
-      throw error;
-    }
-  }
-}
 
 export const prisma =
   globalForPrisma.prisma ??
