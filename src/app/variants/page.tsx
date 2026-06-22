@@ -2,7 +2,7 @@ import { prisma } from "@/lib/db";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { VariantForm } from "@/components/variants/variant-form";
 import { VariantItem } from "@/components/variants/variant-item";
-
+export const dynamic = "force-dynamic";
 export default async function VariantsPage() {
   const variants = await prisma.variantCategory.findMany({ orderBy: { name: "asc" } });
 
